@@ -48,7 +48,7 @@ export default {
     async runScript () {
       this.returns = await this.$store.dispatch('getReturnsById', +this.id)
     },
-    updateScript () {
+    async updateScript () {
       clearInterval(this.delayGetRoom)
       clearTimeout(this.delayedSending)
       this.delayedSending = setTimeout(async () => {

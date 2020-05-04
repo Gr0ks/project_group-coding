@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
+app.use(express.json());
+
 const ROOMS = [
   { id: 12345, name: 'test', script: '(() => {\nreturn "It\'s work!"\n})()', returns: '1'}
 ];
@@ -22,9 +24,20 @@ app.get('/api/runScript/:id', (req, res) => {
   res.status(200).json({script, returns});
 });
 
-app.post('/api/room', (req, res) => {});
+app.post('/api/room', (req, res) => {
+  const room = req.body;
+  room.id = Number(Date.now());
+  room.script = '(() => {\nreturn "It\'s work!"\n})()';
+  room.returns = '';
+  ROOMS.push(room);
+  res.status(200).json({ok: true});
+});
 
-app.post('/api/room/:id', (req, res) => {});
+app.put('/api/room/:id', (req, res) => {
+  const room = ROOMS.find(r => (+r.id) === (+req.params.id));
+  room.script = req.body.script;
+  res.status(200).json({ok: true});
+});
 
 app.use(express.static(path.resolve(__dirname, 'client', 'dist')));
 

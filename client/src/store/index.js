@@ -60,21 +60,20 @@ export default new Vuex.Store({
           body
         })
       } catch (e) {
-        console.log(`Error: ${e}`)
+        console.warn(`Error: ${e}`)
       }
     },
     async updateScript (s, script) {
       try {
         const headers = {}
         headers['Content-Type'] = 'application/json'
-        const body = JSON.stringify(script)
-        const response = await fetch(`http://192.168.0.14:9980/api/room/${script.id}`, {
-          method: 'POST',
-          mode: 'no-cors',
+        const body = JSON.stringify({ script: script.script })
+        await fetch(`http://192.168.0.14:9980/api/room/${script.id}`, {
+          method: 'PUT',
+          mode: 'cors',
           headers,
           body
         })
-        return await response.json()
       } catch (e) {
         console.warn(`Error: ${e}`)
       }
