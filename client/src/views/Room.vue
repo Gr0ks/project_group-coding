@@ -1,5 +1,5 @@
 <template>
-  <div class="row" v-if="script">
+  <div class="row" v-if="id">
     <form class="col s8" style="padding-left: 5%;" @submit.prevent="runScript">
       <div class="form-group">
         <label for="script"><h3>Script</h3></label>
@@ -26,6 +26,7 @@
 export default {
   name: 'Room',
   data: () => ({
+    id: '',
     script: '',
     returns: ''
   }),
@@ -36,14 +37,29 @@ export default {
   },
   methods: {
     runScript () {
-      this.returns = `run: ${this.script}`
+      this.returns = this.$store.getters.returnsById(+this.id)
     },
     updateScript () {
+      clearInterval(this.delayGetRoom)
       clearTimeout(this.delayedSending)
       this.delayedSending = setTimeout(() => {
-        
-        console.log(this.script)
+        this.$store.dispatch('updateScript', {
+          id: this.id,
+          script: this.script
+        })
+        this.delayGetRoom = setInterval(() => {
+          const script = document.getElementById('script')
+          const position = script.selectionStart
+          this.script = this.$store.getters.roomById(+this.id).script
+          this.returns = this.$store.getters.roomById(+this.id).returns
+          script.selectionStart = position
+        }, 500)
       }, 500)
+    }
+  },
+  destroyed () {
+    if (this.delayGetRoom) {
+      clearInterval(this.delayGetRoom)
     }
   }
 }

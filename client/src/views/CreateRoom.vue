@@ -32,7 +32,6 @@ export default {
       this.roomName = ''
       this.$store.dispatch('createRoom', room)
       this.$router.push('/')
-      console.log(room)
     }
   }
 }
