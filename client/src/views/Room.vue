@@ -38,7 +38,7 @@ export default {
     this.delayGetRoom = setInterval(async () => {
       const script = document.getElementById('script')
       const position = script.selectionStart
-      const {script, returns} = await this.$store.dispatch('getRoomById', +this.id)
+      const room = await this.$store.dispatch('getRoomById', +this.id)
       this.script = room.script
       this.returns = room.returns
       script.selectionStart = position
@@ -49,22 +49,22 @@ export default {
       this.returns = await this.$store.dispatch('getReturnsById', +this.id)
     },
     updateScript () {
-      // clearInterval(this.delayGetRoom)
-      // clearTimeout(this.delayedSending)
-      // this.delayedSending = setTimeout(() => {
-      //   this.$store.dispatch('updateScript', {
-      //     id: this.id,
-      //     script: this.script
-      //   })
-      //   this.delayGetRoom = setInterval(async () => {
-      //     const script = document.getElementById('script')
-      //     const position = script.selectionStart
-      //     const {script, returns} = await this.$store.dispatch('getRoomById', +this.id)
-      //     this.script = room.script
-      //     this.returns = room.returns
-      //     script.selectionStart = position
-      //   }, 500)
-      // }, 500)
+      clearInterval(this.delayGetRoom)
+      clearTimeout(this.delayedSending)
+      this.delayedSending = setTimeout(async () => {
+        await this.$store.dispatch('updateScript', {
+          id: this.id,
+          script: this.script
+        })
+        this.delayGetRoom = setInterval(async () => {
+          const script = document.getElementById('script')
+          const position = script.selectionStart
+          const room = await this.$store.dispatch('getRoomById', +this.id)
+          this.script = room.script
+          this.returns = room.returns
+          script.selectionStart = position
+        }, 500)
+      }, 500)
     }
   },
   destroyed () {

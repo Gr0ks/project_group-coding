@@ -8,26 +8,7 @@ export default new Vuex.Store({
     rooms: [],
     room: {}
   },
-  mutations: {
-    async createRoom (state, room) {
-      try {
-        const headers = {}
-        headers['Content-Type'] = 'application/json'
-        const body = JSON.stringify(room)
-        const response = await fetch('http://192.168.0.14:9980/api/room', {
-          method: 'POST',
-          headers,
-          body
-        })
-        return await response.json()
-      } catch (e) {
-        console.log(`Error: ${e}`)
-      }
-    },
-    async updateScript (state, script) {
-      
-    }
-  },
+  mutations: {},
   actions: {
     async getRooms (s) {
       try {
@@ -68,8 +49,19 @@ export default new Vuex.Store({
         console.warn(`Error: ${e}`)
       }
     },
-    async createRoom ({ commit }, room) {
-      await commit('createRoom', room)
+    async createRoom (s, room) {
+      try {
+        const headers = {}
+        headers['Content-Type'] = 'application/json'
+        const body = JSON.stringify(room)
+        await fetch('http://192.168.0.14:9980/api/room', {
+          method: 'POST',
+          headers,
+          body
+        })
+      } catch (e) {
+        console.log(`Error: ${e}`)
+      }
     },
     async updateScript (s, script) {
       try {
@@ -77,7 +69,7 @@ export default new Vuex.Store({
         headers['Content-Type'] = 'application/json'
         const body = JSON.stringify(script)
         const response = await fetch(`http://192.168.0.14:9980/api/room/${script.id}`, {
-          method: 'POST',          
+          method: 'POST',
           mode: 'no-cors',
           headers,
           body
