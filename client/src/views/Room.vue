@@ -30,31 +30,41 @@ export default {
     script: '',
     returns: ''
   }),
-  mounted () {
+  async mounted () {
     this.id = this.$route.params.id
-    this.script = this.$store.getters.roomById(+this.id).script
-    this.returns = this.$store.getters.roomById(+this.id).returns
+    const room = await this.$store.dispatch('getRoomById', +this.id)
+    this.script = room.script
+    this.returns = room.returns
+    this.delayGetRoom = setInterval(async () => {
+      const script = document.getElementById('script')
+      const position = script.selectionStart
+      const {script, returns} = await this.$store.dispatch('getRoomById', +this.id)
+      this.script = room.script
+      this.returns = room.returns
+      script.selectionStart = position
+    }, 500)
   },
   methods: {
-    runScript () {
-      this.returns = this.$store.getters.returnsById(+this.id)
+    async runScript () {
+      this.returns = await this.$store.dispatch('getReturnsById', +this.id)
     },
     updateScript () {
-      clearInterval(this.delayGetRoom)
-      clearTimeout(this.delayedSending)
-      this.delayedSending = setTimeout(() => {
-        this.$store.dispatch('updateScript', {
-          id: this.id,
-          script: this.script
-        })
-        this.delayGetRoom = setInterval(() => {
-          const script = document.getElementById('script')
-          const position = script.selectionStart
-          this.script = this.$store.getters.roomById(+this.id).script
-          this.returns = this.$store.getters.roomById(+this.id).returns
-          script.selectionStart = position
-        }, 500)
-      }, 500)
+      // clearInterval(this.delayGetRoom)
+      // clearTimeout(this.delayedSending)
+      // this.delayedSending = setTimeout(() => {
+      //   this.$store.dispatch('updateScript', {
+      //     id: this.id,
+      //     script: this.script
+      //   })
+      //   this.delayGetRoom = setInterval(async () => {
+      //     const script = document.getElementById('script')
+      //     const position = script.selectionStart
+      //     const {script, returns} = await this.$store.dispatch('getRoomById', +this.id)
+      //     this.script = room.script
+      //     this.returns = room.returns
+      //     script.selectionStart = position
+      //   }, 500)
+      // }, 500)
     }
   },
   destroyed () {

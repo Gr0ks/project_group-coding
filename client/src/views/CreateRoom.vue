@@ -20,17 +20,12 @@ export default {
     roomName: ''
   }),
   methods: {
-    createRoom () {
+    async createRoom () {
       const room = {
-        name: this.roomName,
-        id: Date.now(),
-        script: `(() => {
-
-})();`,
-        returns: '1'
+        name: this.roomName
       }
       this.roomName = ''
-      this.$store.dispatch('createRoom', room)
+      await this.$store.dispatch('createRoom', room)
       this.$router.push('/')
     }
   }

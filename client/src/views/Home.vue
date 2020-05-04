@@ -10,11 +10,11 @@
 
 export default {
   name: 'room',
-  computed: {
-    rooms () {
-      return this.$store.getters.rooms
-    }
-  },
-  components: {}
+  data: () => ({
+    rooms: []
+  }),
+  async mounted () {
+    this.rooms = await this.$store.dispatch('getRooms')
+  }
 }
 </script>

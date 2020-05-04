@@ -5,33 +5,89 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    rooms: []
+    rooms: [],
+    room: {}
   },
   mutations: {
-    createRoom (state, room) {
-      state.rooms.push(room)
+    async createRoom (state, room) {
+      try {
+        const headers = {}
+        headers['Content-Type'] = 'application/json'
+        const body = JSON.stringify(room)
+        const response = await fetch('http://192.168.0.14:9980/api/room', {
+          method: 'POST',
+          headers,
+          body
+        })
+        return await response.json()
+      } catch (e) {
+        console.log(`Error: ${e}`)
+      }
     },
-    updateScript (state, script) {
-      const room = state.rooms.find(t => (+t.id) === (+script.id))
-      room.script = script.script
+    async updateScript (state, script) {
+      
     }
   },
   actions: {
-    createRoom ({ commit }, room) {
-      commit('createRoom', room)
+    async getRooms (s) {
+      try {
+        const response = await fetch('http://192.168.0.14:9980/api/rooms', {
+          method: 'GET',
+          headers: {},
+          mode: 'no-cors'
+        })
+        const rooms = await response.json()
+        return rooms
+      } catch (e) {
+        console.warn(`Error: ${e}`)
+      }
     },
-    updateScript ({ commit }, script) {
-      commit('updateScript', script)
+    async getRoomById (s, id) {
+      try {
+        const response = await fetch(`http://192.168.0.14:9980/api/room/${id}`, {
+          method: 'GET',
+          headers: {},
+          mode: 'no-cors'
+        })
+        const room = await response.json()
+        return room
+      } catch (e) {
+        console.warn(`Error: ${e}`)
+      }
+    },
+    async getReturnsById (s, id) {
+      try {
+        const response = await fetch(`http://192.168.0.14:9980/api/runScript/${id}`, {
+          method: 'GET',
+          headers: {},
+          mode: 'no-cors'
+        })
+        const room = await response.json()
+        return room.returns
+      } catch (e) {
+        console.warn(`Error: ${e}`)
+      }
+    },
+    async createRoom ({ commit }, room) {
+      await commit('createRoom', room)
+    },
+    async updateScript (s, script) {
+      try {
+        const headers = {}
+        headers['Content-Type'] = 'application/json'
+        const body = JSON.stringify(script)
+        const response = await fetch(`http://192.168.0.14:9980/api/room/${script.id}`, {
+          method: 'POST',          
+          mode: 'no-cors',
+          headers,
+          body
+        })
+        return await response.json()
+      } catch (e) {
+        console.warn(`Error: ${e}`)
+      }
     }
   },
-  getters: {
-    rooms: s => s.rooms,
-    roomById: s => id => s.rooms.find(t => (+t.id) === (+id)),
-    returnsById: s => id => {
-      const room = s.rooms.find(t => (+t.id) === (+id))
-      room.returns = `return ${room.script}`
-      return room.returns
-    }
-  },
+  getters: {},
   modules: {}
 })
