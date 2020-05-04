@@ -1,9 +1,9 @@
 <template>
   <div class="row" >
-    <form class="col s12">
+    <form class="col s12" @submit.prevent="createRoom">
       <div class="row" >
         <div class="input-field col s12 ">
-          <input placeholder="Room name" id="name" type="text" class="validate">
+          <input v-model="roomName" placeholder="Room name" id="name" type="text" class="validate">
           <label for="first_name"></label>
         </div>
       </div>
@@ -15,5 +15,25 @@
 <script>
 // @ is an alias to /src
 
-export default {}
+export default {
+  data: () => ({
+    roomName: ''
+  }),
+  methods: {
+    createRoom () {
+      const room = {
+        name: this.roomName,
+        id: Date.now(),
+        script: `(() => {
+
+})();`,
+        returns: '1'
+      }
+      this.roomName = ''
+      this.$store.dispatch('createRoom', room)
+      this.$router.push('/')
+      console.log(room)
+    }
+  }
+}
 </script>
